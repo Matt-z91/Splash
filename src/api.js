@@ -8,7 +8,8 @@ if (true) { // enable/disable convinence
     axios({
         method: 'GET',
         url: config.apiUrl + `photos/?client_id=${config.consumerKey}`,
-    }).then(res => {
+    })
+    .then(res => {
         if (res.data) {
             let imageObj = res.data[Math.floor(Math.random() * res.data.length)];
             let url = imageObj.urls.full;
@@ -26,7 +27,6 @@ if (true) { // enable/disable convinence
 const downloadImage = async (url) => {
     const imagePath = path.resolve(__dirname, 'walls', 'bg.jpg');
     const writer = fs.createWriteStream(imagePath);
-
     const response = await axios({
         method: 'GET',
         url: url,
@@ -43,17 +43,10 @@ const downloadImage = async (url) => {
     });
 }
 
-// return current wallpaper location
-const getWallpaper = async (url) => {
-    return await wallpaper.get();
-}
-
+// set current wallpaper
 const setWallpaper = async (filePath) => {
     return await wallpaper.set(filePath);
 };
-
-//getWallpaper().then(res => { console.log(res); });
-
 
 
 
