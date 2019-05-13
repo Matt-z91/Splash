@@ -6,10 +6,10 @@ const config = require('../config.js');
 
 if (true) { // enable/disable convinence
 
-    let url = config.apiUrl + `photos/?client_id=${config.consumerKey}/`;
+    let url = config.apiUrl + `photos/?client_id=${config.consumerKey}`;
     
     if (config.collections.length) {
-        url += '?'
+        url += '&'
         config.collections.map((term, i, arr) => {
             url += term;
             if (arr.length - 1 !== i) {
