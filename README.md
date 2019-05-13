@@ -1,6 +1,6 @@
 1) Run npm install
 
-2) Modify config.js; add Unsplash app auth
+2) Modify config.js; add Unsplash app id
 
 3) Run `node src/api.js`
 
