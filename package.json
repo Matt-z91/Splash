@@ -1,0 +1,23 @@
+{
+  "name": "wallpaperchanger",
+  "version": "1.0.0",
+  "description": "1) Run npm install",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Matt-z91/randomWallpaper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Matt-z91/randomWallpaper/issues"
+  },
+  "homepage": "https://github.com/Matt-z91/randomWallpaper#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "wallpaper": "^4.4.0"
+  }
+}
