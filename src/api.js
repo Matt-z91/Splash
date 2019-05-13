@@ -4,36 +4,15 @@ const path = require('path');
 const wallpaper = require('wallpaper');
 const config = require('../config.js');
 
-if (true) { // enable/disable convinence
-
-    let url = config.apiUrl + `photos/?client_id=${config.consumerKey}`;
-    
-    if (config.collections.length) {
-        url += '&'
-        config.collections.map((term, i, arr) => {
-            url += term;
-            if (arr.length - 1 !== i) {
-                url += ','
-            }
-        });
-    }
-
-    axios({
+const searchCollection = async (query) => {
+    const url = `${config.apiUrl}search/collections?page=1&per_page=1&query=${query}&client_id=${config.consumerKey}`;
+    return await axios({
         method: 'GET',
-        url: url
-    })
-    .then(res => {
-        if (res.data) {
-            let imageObj = res.data[Math.floor(Math.random() * res.data.length)];
-            let url = imageObj.urls.full;
-            return downloadImage(url);
-        }
-    })
-    .then(imagePath => {
-        setWallpaper(imagePath);    
+        url: url,
     })
     .catch(error => {
-        console.log(error);
+        console.log('searchCollection error: ');
+        console.log(error.response.statusText);
     });
 }
 
@@ -61,6 +40,53 @@ const setWallpaper = async (filePath) => {
     return await wallpaper.set(filePath);
 };
 
+const fetchWallpaper = async (url) => {
+    url = url + `client_id=${config.consumerKey}`;
+    axios({
+        method: 'GET',
+        url: url
+    })
+    .then(res => {
+        if (res.data) {
+            console.log('data:');
+            console.log(res.data);
+            let url = '';
+            if (res.data.length > 0) {
+                let imageObj = res.data[Math.floor(Math.random() * res.data.length)];
+                url = imageObj.urls.full;
+            } else {
+                url = res.data.urls.full;
+            }
+            return downloadImage(url);
+        }
+    })
+    .then(imagePath => {
+        setWallpaper(imagePath);    
+    })
+    .catch(error => {
+        console.log(error);
+    });
+};
 
 
-
+if (true) { // enable/disable convinence
+    let url = config.apiUrl + `photos/random`;
+    let ids = [];
+    if (config.collections.length) {
+        let collectionReqs = [];
+        for (let i = 0; i <= config.collections.length; i++) {
+            collectionReqs.push(searchCollection(config.collections[i]));
+        }
+        axios.all(collectionReqs)
+        .then(collections => {
+            collections.map(obj => {
+                ids.push(obj.data.results[0].id);
+            });
+            ids = ids.join(',');            
+            url = url += `?collections=${ids}&`;
+            fetchWallpaper(url);
+        });
+    } else {
+        fetchWallpaper((url + '?'));
+    }
+}
