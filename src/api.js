@@ -48,8 +48,6 @@ const fetchWallpaper = async (url) => {
     })
     .then(res => {
         if (res.data) {
-            console.log('data:');
-            console.log(res.data);
             let url = '';
             if (res.data.length > 0) {
                 let imageObj = res.data[Math.floor(Math.random() * res.data.length)];
