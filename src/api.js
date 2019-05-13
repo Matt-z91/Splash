@@ -1,0 +1,60 @@
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const wallpaper = require('wallpaper');
+const config = require('../config.js');
+
+if (true) { // enable/disable convinence
+    axios({
+        method: 'GET',
+        url: config.apiUrl + `photos/?client_id=${config.consumerKey}`,
+    }).then(res => {
+        if (res.data) {
+            let imageObj = res.data[Math.floor(Math.random() * res.data.length)];
+            let url = imageObj.urls.full;
+            return downloadImage(url);
+        }
+    })
+    .then(imagePath => {
+        setWallpaper(imagePath);    
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
+
+const downloadImage = async (url) => {
+    const imagePath = path.resolve(__dirname, 'walls', 'bg.jpg');
+    const writer = fs.createWriteStream(imagePath);
+
+    const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'stream',
+    });
+
+    if (response.data) {
+        response.data.pipe(writer);
+    }
+
+    return new Promise((resolve, reject) => {
+        writer.on('finish', resolve(imagePath));
+        writer.on('error', reject(false));
+    });
+}
+
+// return current wallpaper location
+const getWallpaper = async (url) => {
+    return await wallpaper.get();
+}
+
+const setWallpaper = async (filePath) => {
+    return await wallpaper.set(filePath);
+};
+
+//getWallpaper().then(res => { console.log(res); });
+
+
+
+
+
