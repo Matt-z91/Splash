@@ -70,21 +70,35 @@ const fetchWallpaper = async (url) => {
 if (true) { // enable/disable convinence
     let url = config.apiUrl + `photos/random`;
     let ids = [];
-    if (config.collections.length) {
-        let collectionReqs = [];
-        for (let i = 0; i <= config.collections.length; i++) {
-            collectionReqs.push(searchCollection(config.collections[i]));
+
+    if (process.argv.length > 0 || config.collections.length > 0) {
+        let findCollections = [];
+        let args = process.argv.slice(2);
+        if (args.length) {
+            findCollections = args;
+        } else {
+            findCollections = config.collcetions;
         }
-        axios.all(collectionReqs)
-        .then(collections => {
-            collections.map(obj => {
-                ids.push(obj.data.results[0].id);
+
+        if (findCollections.length) {
+            let collectionRequests = [];
+            for (let i = 0; i <= findCollections.length; i++) {
+                collectionRequests.push(searchCollection(findCollections[i]));
+            }
+            axios.all(collectionRequests)
+            .then(collections => {
+                collections.map(obj => {
+                    ids.push(obj.data.results[0].id);
+                });
+                ids = ids.join(',');            
+                url = url += `?collections=${ids}&`;
+                fetchWallpaper(url);
             });
-            ids = ids.join(',');            
-            url = url += `?collections=${ids}&`;
-            fetchWallpaper(url);
-        });
-    } else {
+        } else {
+            console.log('Collections are empty, please specify collection/s to search for.');
+        }
+    } 
+    else {
         fetchWallpaper((url + '?'));
     }
 }
