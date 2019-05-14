@@ -6,4 +6,11 @@ Fetch, download and set a random desktop wallpaper from Unplash.com
 
 3) Run `node src/api.js`
 
-latest wallpaper is stored in /src/walls
+Pulled images are stored in /src/walls
+
+
+Possible setups
+
+- Add several keywords to the config.js file
+- Create a terminal alias, e.g, `alias cw="node /home/user/projects/splash/src/api.js` that
+can be run as `cw water` , `cw japan zen garden` etc.
