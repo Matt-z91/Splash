@@ -11,6 +11,6 @@ Pulled images are stored in /src/walls
 
 Possible setups
 
-- Add several keywords to the config.js file
+- Add several keywords to the config.js file and run it manually
 - Create a terminal alias, e.g, `alias cw="node /home/user/projects/splash/src/api.js` that
 can be run as `cw water` , `cw japan zen garden` etc.
