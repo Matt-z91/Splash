@@ -11,7 +11,6 @@ const searchCollection = async (query) => {
         url: url,
     })
     .catch(error => {
-        console.log('searchCollection error: ');
         console.log(error.response.statusText);
     });
 }
@@ -62,7 +61,7 @@ const fetchWallpaper = async (url) => {
         setWallpaper(imagePath);    
     })
     .catch(error => {
-        console.log(error);
+        console.log(error.response.statusText);
     });
 };
 
@@ -93,6 +92,9 @@ if (true) { // enable/disable convinence
                 ids = ids.join(',');            
                 url = url += `?collections=${ids}&`;
                 fetchWallpaper(url);
+            })
+            .catch(err => {
+                console.log('Error: ', err);
             });
         } else {
             console.log('Collections are empty, please specify collection/s to search for.');
