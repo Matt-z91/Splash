@@ -87,7 +87,9 @@ if (true) { // enable/disable convinence
             axios.all(collectionRequests)
             .then(collections => {
                 collections.map(obj => {
-                    ids.push(obj.data.results[0].id);
+                    if (obj.data.results.length > 0) {
+                        ids.push(obj.data.results[0].id);
+                    }
                 });
                 ids = ids.join(',');            
                 url = url += `?collections=${ids}&`;
