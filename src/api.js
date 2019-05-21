@@ -4,17 +4,6 @@ const path = require('path');
 const wallpaper = require('wallpaper');
 const config = require('../config.js');
 
-const searchCollection = async (query) => {
-    const url = `${config.apiUrl}search/collections?page=1&per_page=1&query=${query}&client_id=${config.consumerKey}`;
-    return await axios({
-        method: 'GET',
-        url: url,
-    })
-    .catch(error => {
-        console.log(error.response.statusText);
-    });
-}
-
 const downloadImage = async (url) => {
     const imagePath = path.resolve(__dirname, 'walls', 'bg.jpg');
     const writer = fs.createWriteStream(imagePath);
@@ -40,69 +29,42 @@ const setWallpaper = async (filePath) => {
 };
 
 const fetchWallpaper = async (url) => {
-    url = url + `client_id=${config.consumerKey}`;
+    url = url + `&client_id=${config.consumerKey}`;
     axios({
         method: 'GET',
         url: url
     })
     .then(res => {
         if (res.data) {
-            let url = '';
-            if (res.data.length > 0) {
-                let imageObj = res.data[Math.floor(Math.random() * res.data.length)];
-                url = imageObj.urls.full;
-            } else {
-                url = res.data.urls.full;
-            }
-            return downloadImage(url);
+            let rand = Math.floor(Math.random() * res.data.results.length);
+            const imgObj = res.data.results[rand];
+            console.log(`
+                "${imgObj.description}",
+                username: ${imgObj.user.username},
+                Full name: ${imgObj.user.first_name} ${imgObj.user.last_time},
+                Profile: ${imgObj.links.self}
+            `);
+            return downloadImage(imgObj.urls.full);
         }
     })
     .then(imagePath => {
         setWallpaper(imagePath);    
     })
     .catch(error => {
+        console.log(error.response);
         console.log(error.response.statusText);
     });
 };
 
 
 if (true) { // enable/disable convinence
-    let url = config.apiUrl + `photos/random`;
-    let ids = [];
-
-    if (process.argv.length > 0 || config.collections.length > 0) {
-        let findCollections = [];
+    if (process.argv.length > 0) {
         let args = process.argv.slice(2);
         if (args.length) {
-            findCollections = args;
+            let url = config.apiUrl + `search/photos?query=${args[0]}`;
+            fetchWallpaper(url)
         } else {
-            findCollections = config.collcetions;
-        }
-
-        if (findCollections.length) {
-            let collectionRequests = [];
-            for (let i = 0; i <= findCollections.length; i++) {
-                collectionRequests.push(searchCollection(findCollections[i]));
-            }
-            axios.all(collectionRequests)
-            .then(collections => {
-                collections.map(obj => {
-                    if (obj.data.results.length > 0) {
-                        ids.push(obj.data.results[0].id);
-                    }
-                });
-                ids = ids.join(',');            
-                url = url += `?collections=${ids}&`;
-                fetchWallpaper(url);
-            })
-            .catch(err => {
-                console.log('Error: ', err);
-            });
-        } else {
-            console.log('Collections are empty, please specify collection/s to search for.');
+            console.log('Must provide keyword to search for.');
         }
     } 
-    else {
-        fetchWallpaper((url + '?'));
-    }
 }
