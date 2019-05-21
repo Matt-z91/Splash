@@ -42,7 +42,7 @@ const fetchWallpaper = async (url) => {
                 "${imgObj.description}",
                 username: ${imgObj.user.username},
                 Full name: ${imgObj.user.first_name} ${imgObj.user.last_time},
-                Profile: ${imgObj.links.self}
+                Profile: ${imgObj.user.links.self}
             `);
             return downloadImage(imgObj.urls.full);
         }
